@@ -114,10 +114,11 @@ module BigKeeper
     def branchs_with_type(path, type)
       branchs = []
       Dir.chdir(path) do
-        IO.popen('git branch -a') do | io |
+        IO.popen('git branch -r') do | io |
           io.each do | line |
-            branchs << line.gsub('\n', '') if line.include?('develop')
-            branchs << line.gsub(/\s/, '') if line =~ /[\s\S]*#{GitflowType.name(type)}*/
+            branch_name = line.chomp!.strip
+            branchs << 'develop' if branch_name.include?('develop') && GitflowType.name(type) == GitflowType::FEATURE
+            branchs << branch_name.gsub(/\s/, '') if branch_name =~ /[\s\S]*#{GitflowType.name(type)}*/
           end
         end
       end
