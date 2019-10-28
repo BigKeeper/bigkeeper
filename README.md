@@ -106,6 +106,12 @@ bigkeeper 的出现就是为了解决这些问题。
 - [一些建议](./docs/zh-CN/RECOMMEND.md)
 - [一些思考]()
 
+## 答疑 
+
+可以加入 bigkeeper 官方答疑群提问
+
+![](resources/bigkeeper_q&a.jpeg)
+
 ## 协议
 
 ![](https://upload.wikimedia.org/wikipedia/commons/thumb/f/f8/License_icon-mit-88x31-2.svg/128px-License_icon-mit-88x31-2.svg.png)
