@@ -110,7 +110,7 @@ bigkeeper 的出现就是为了解决这些问题。
 
 可以加入 bigkeeper 官方答疑群提问
 
-![](https://github.com/BigKeeper/bigkeeper/blob/develop/resources/bigkeeper_q%26a.jpeg)
+![](https://github.com/BigKeeper/bigkeeper/blob/develop/resources/bigkeeper_q&a.jpeg?raw=true)
 
 ## 协议
 
