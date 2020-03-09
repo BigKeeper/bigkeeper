@@ -201,8 +201,7 @@ module BigKeeper
       BigkeeperParser.parse("#{path}/Bigkeeper")
 
       version = BigkeeperParser.version if version == 'Version in Bigkeeper file'
-      modules = BigkeeperParser.module_names if (modules.nil? || modules.empty?)
-      modules = release_check_changed_modules(path, user) if (modules.nil? || modules.empty?)
+      modules = release_check_changed_modules(path, user) if (modules.nil? || modules.empty?
       if modules.nil? || modules.empty?
         Logger.error('no module need to release')
       end
