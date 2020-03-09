@@ -132,6 +132,12 @@ module BigKeeper
       ModuleCacheOperator.new(path).add_path_module(module_name)
     end
 
+    def new_add(path, user, module_name)
+      DepService.dep_operator(path, user).update_module_config(module_name, ModuleOperateType::ADD)
+      module_full_path = BigkeeperParser.module_full_path(path, user, module_name)
+      ModuleCacheOperator.new(path).add_path_module(module_name)
+    end
+
     def del(path, user, module_name, name, type)
       home_branch_name = "#{GitflowType.name(type)}/#{name}"
 

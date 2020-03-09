@@ -1,21 +1,28 @@
 require 'big_keeper/util/logger'
 require 'yaml'
 require 'engine/parse_para'
+require 'engine/parse_flow'
+require 'engine/parse_plugins'
 
 module BigKeeper
   class ParseEngine
     @@config = {}
+    @@global_options;
+    @@user;
 
       ## parse config file
     def self.parse_config(path)
       @@config = {}
       if !path.empty?
-          config = path + '/bigkeeper_config.yml'
+          config = path + '/bigkeeper_config_1.yml'
           Logger.error("Can't find a bigkeeper_config file in current directory.") if !FileOperator.definitely_exists?(config)
           # todo: load default config
-          @@config = YAML.load_file(config)
-          p @@config
+          @@config = YAML.load_file(config)     
       end
+    end
+
+    def self.parse_plugin(path)
+      ParsePlugins.parse_plugin(path)
     end
 
       ## parse input command
@@ -25,13 +32,9 @@ module BigKeeper
         Logger.error("Can't find input command '#{input_command}' in config file.")
       end
 
-      flows = ParseEngine.command_flow(cmd_match_res)
-      for flow in flows do
-        para = ParseEngine.command_flow_para(cmd_match_res, flow)
-        if para
-          ParseParaUtil.ask_user_input_require_para(flow, para)
-        end
-      end
+      ParseFlow.parse_flow(@@config[cmd_match_res]['flow'])
+      
+      ParsePara.ask_user_input_require_para(@@config[cmd_match_res]['para'])
     end
 
       ## 解析配置所有命令
@@ -52,11 +55,6 @@ module BigKeeper
       short_cmds
     end
 
-      ## return command flows
-    def self.command_flow(command)
-      @@config[command].keys
-    end
-
       ## return command flow's para
     def self.command_flow_para(command, flow)
       flow = @@config[command][flow]
@@ -73,6 +71,18 @@ module BigKeeper
         end
       end
       match_command
+    end
+
+    def self.save_global_options(global_options)
+      @@global_options = global_options
+    end
+
+    def self.user
+      @@global_options['user']
+    end
+
+    def self.user_path
+      @@global_options['path']
     end
 
   end

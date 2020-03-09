@@ -22,7 +22,10 @@ require 'engine/parse_engine'
 require 'gli'
 
 require 'flow/git_flow'
+require 'node/git_node'
 require 'engine/parse_para'
+require 'engine/parse_flow'
+require 'engine/parse_plugins'
 
 include GLI::App
 
@@ -40,6 +43,7 @@ module BigKeeper
     p 'analysis_config_file'
     
     ParseEngine.parse_config(@@path)
+    ParseEngine.parse_plugin(@@path)
     @cmd = ParseEngine.short_command_list()
   end
 
@@ -57,7 +61,7 @@ module BigKeeper
 
   pre do |global_options, command, options, args|
     LeanCloudLogger.instance.start_log(global_options, args)
-    ParseParaUtil.save_global_options(global_options)
+    ParseEngine.save_global_options(global_options)
   end
 
   post do |global_options, command, options, args|
@@ -88,21 +92,22 @@ module BigKeeper
     # desc 'Show version of bigkeeper'
     command cmd do |cmd|
       cmd.action do |global_options, options, args|
-        p "global_options #{global_options}"
-        p "global_options #{global_options.keys}"
-        p "options #{options}"
         input_cmd = "#{cmd.name} " + args.join(' ')
+
         ParseEngine.parse_command(input_cmd)
-        BigkeeperParser.parse("#{ParseParaUtil.user_path}/Bigkeeper")
+        BigkeeperParser.parse("#{ParseEngine.user_path}/Bigkeeper")
 
         match_command = ParseEngine.command_match(input_cmd)
-        for flow in ParseEngine.command_flow(match_command) do
-          input_para = ParseParaUtil.get_flow_para(flow)
-          if input_para
-            hash = input_para.input_hash
-            eval("#{flow}(#{hash})")
+        for flow in ParseFlow.load_command_flow do
+          flow_input = ParseFlow.get_command_input(flow)
+          if flow.end_with?(".rb", ".py", ".sh")
+            ParsePlugins.execute(flow)
           else
-            eval("#{flow}")
+            if flow_input
+              eval("#{flow}(#{flow_input})")
+            else
+              eval("#{flow}()")  
+            end
           end
         end
       end
