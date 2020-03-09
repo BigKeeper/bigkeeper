@@ -24,24 +24,22 @@ module BigKeeper
     baseline_branch = BigkeeperParser.global_configs("baselineBranch") 
     
     Dir.chdir(ParseEngine.user_path) do
-      checkout(baseline_branch)
+      verify_checkout(baseline_branch)
       pull()
-      checkout_new_branch(branch_name)
+      verify_checkout(branch_name)
     end
 
     for module_name in modules do
       module_path = BigkeeperParser.module_full_path(ParseEngine.user_path, ParseEngine.user, module_name)
       Dir.chdir(module_path) do
-        checkout(baseline_branch)
+        verify_checkout(baseline_branch)
         pull()
-        checkout_new_branch(branch_name)
+        verify_checkout(branch_name)
       end
     end
   end
   
   def self.change_to_path(flow_inputs)
-    p 'change_to_path'
-
     branch_name = 'branch_name';
     modules = 'modules';
     for input in flow_inputs
@@ -91,7 +89,6 @@ module BigKeeper
   end
 
   def self.pod_install
-    p "pod_install"
     Dir.chdir(ParseEngine.user_path) do
       pod_install_fast_mode()
     end

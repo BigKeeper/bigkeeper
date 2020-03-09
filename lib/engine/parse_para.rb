@@ -13,13 +13,17 @@ module BigKeeper
       for para in paras do
         Logger.highlight("#{para['descript']}")
         input = STDIN.gets().chop
-        para_model = ParaModel.new(para['key'], input)
-        @@paras << para_model
+        ParsePara.add_para(para['key'], input)
       end
     end
 
     def self.parse_para_list
       @@paras
+    end
+
+    def self.add_para(key, value)
+      para_model = ParaModel.new(key, value)
+      @@paras << para_model
     end
 
     def self.get_flow_para(key)

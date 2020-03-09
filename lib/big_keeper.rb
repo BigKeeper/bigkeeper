@@ -22,6 +22,8 @@ require 'engine/parse_engine'
 require 'gli'
 
 require 'flow/git_flow'
+require 'flow/command_flow'
+
 require 'node/git_node'
 require 'engine/parse_para'
 require 'engine/parse_flow'

@@ -20,12 +20,12 @@ module BigKeeper
     Logger.error("git pull failed.") if has_error
   end
 
-  def self.checkout_new_branch(branch_name)
+  def self.verify_checkout(branch_name)
     cmd = "git checkout -b #{branch_name}"
     if has_branch(branch_name)
       cmd = "git checkout #{branch_name}"
     end
-    IO.popen("git checkout -b #{branch_name}") do |io|
+    IO.popen(cmd) do |io|
       io.each do |line|
         Logger.error("Checkout #{branch_name} failed.") if line.include? 'error'
       end
@@ -128,5 +128,8 @@ module BigKeeper
     end
   end
 
+  def self.current_branch
+    `git rev-parse --abbrev-ref HEAD`.chop
+  end
 end
 
