@@ -23,6 +23,8 @@ require 'gli'
 
 require 'flow/git_flow'
 require 'flow/command_flow'
+require 'flow/podfile_flow'
+require 'flow/pod_flow'
 
 require 'node/git_node'
 require 'engine/parse_para'

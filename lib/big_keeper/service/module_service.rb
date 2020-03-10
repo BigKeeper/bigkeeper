@@ -156,7 +156,7 @@ module BigKeeper
     end
 
     def new_del(path, user, module_name, branch_name)
-      Logger.highlight("Delete branch '#{home_branch_name}' for module '#{module_name}'...")
+      Logger.highlight("Delete branch '#{branch_name}' for module '#{module_name}'...")
 
       module_git = BigkeeperParser.module_git(module_name)
       DepService.dep_operator(path, user).update_module_config(module_name, ModuleOperateType::DELETE)
