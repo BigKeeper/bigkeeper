@@ -23,9 +23,6 @@ module BigKeeper
     path = ParseEngine.user_path
     user = ParseEngine.user
       
-    # Start modules feature and modify module as path
-
-    p "modules change_to_path = #{modules}"
     if modules
       for module_name in modules
         ModuleService.new.new_add(path, user, module_name)
@@ -33,8 +30,7 @@ module BigKeeper
     end
   end
 
-  def self.change_to_git(flow_inputs)
-    p 'change_to_git'
+  def self.delete_local_path(flow_inputs)
     branch_name = 'branch_name';
     del_modules = 'del_modules';
 
@@ -47,8 +43,6 @@ module BigKeeper
         del_modules = ParsePara.get_flow_para('del_modules').split(' ')
       end
     end
-
-    p "del_modules = #{del_modules}"
   
     if branch_name == 'branch_name'
       Logger.error("please input the require parameter branch_name.")
@@ -57,15 +51,6 @@ module BigKeeper
     path = ParseEngine.user_path
     user = ParseEngine.user
 
-    # current_modules = ModuleCacheOperator.new(path).current_path_modules
-
-    # # Verify input modules
-    # modules = BigkeeperParser.verify_modules(modules)
-
-    # ModuleCacheOperator.new(path).add_git_module(modules)
-    # ModuleCacheOperator.new(path).del_path_module(modules)
-
-    p "modules change_to_git = #{del_modules}"
     if del_modules
       for module_name in del_modules
         ModuleService.new.new_del(path, user, module_name, branch_name)

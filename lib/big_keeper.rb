@@ -97,10 +97,10 @@ module BigKeeper
     command cmd do |cmd|
       cmd.action do |global_options, options, args|
         input_cmd = "#{cmd.name} " + args.join(' ')
-
+        
         ParseEngine.parse_command(input_cmd)
         BigkeeperParser.parse("#{ParseEngine.user_path}/Bigkeeper")
-
+        
         match_command = ParseEngine.command_match(input_cmd)
         for flow in ParseFlow.load_command_flow do
           flow_input = ParseFlow.get_command_input(flow)

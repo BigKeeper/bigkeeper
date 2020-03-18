@@ -14,7 +14,7 @@ module BigKeeper
     def self.parse_config(path)
       @@config = {}
       if !path.empty?
-          config = path + '/bigkeeper_config_1.yml'
+          config = path + '/bigkeeper_config.yml'
           Logger.error("Can't find a bigkeeper_config file in current directory.") if !FileOperator.definitely_exists?(config)
           # todo: load default config
           @@config = YAML.load_file(config)     
@@ -34,7 +34,9 @@ module BigKeeper
 
       ParseFlow.parse_flow(@@config[cmd_match_res]['flow'])
       
-      ParsePara.ask_user_input_require_para(@@config[cmd_match_res]['para'])
+      if @@config[cmd_match_res]['para']
+        ParsePara.ask_user_input_require_para(@@config[cmd_match_res]['para'])
+      end
     end
 
       ## 解析配置所有命令

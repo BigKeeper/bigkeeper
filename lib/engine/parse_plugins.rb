@@ -18,8 +18,16 @@ module BigKeeper
 
     def self.execute(plugin_name)  
       Dir.chdir(@@plugins_file_path) do
+        p `pwd`
         if plugin_name.end_with?(".rb")
-          system "ruby #{plugin_name}"
+          cmd = "ruby #{plugin_name}"
+          IO.popen(cmd) do |io|
+            io.each do |line|
+              p line
+            end
+          end
+          # ParsePlugins.cmd("ruby #{plugin_name}")
+          # system "ruby #{plugin_name}"
         elsif plugin_name.end_with?(".py")
           system "python #{plugin_name}"
         elsif plugin_name.end_with?(".sh")
@@ -29,5 +37,15 @@ module BigKeeper
         end
       end
     end
+
+
+    def self.cmd(cmd)
+      Open3.popen3(cmd) do |stdin , stdout , stderr, wait_thr|
+        while line = stdout.gets
+          puts line
+        end
+      end
+    end
+
   end
 end

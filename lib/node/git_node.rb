@@ -42,19 +42,17 @@ module BigKeeper
     has_branch
   end
 
-  def self.push_to_remote(branch_name)
-    `git push -u #{remote_local_name} #{branch_name}`
-    check_push_success(branch_name, "#{remote_local_name}/#{branch_name}")
-  end
-
   def self.verify_push(comment, branch_name)
     if has_changes || has_commits(branch_name)
       if has_changes
         commit(comment)
         push(branch_name)
+      else
+        push(branch_name)
       end
     else
       Logger.default("Nothing to push for '#{name}'.")
+      push_to_remote(branch_name)
     end
   end
 
@@ -63,6 +61,41 @@ module BigKeeper
       `git push`
     else
       push_to_remote(branch_name)
+    end
+  end
+
+  def self.push_to_remote(branch_name)
+    `git push -u #{remote_local_name()} #{branch_name}`
+    check_push_success(branch_name, "#{remote_local_name}/#{branch_name}")
+  end
+  
+  def self.verify_rebase(branch_name, name)
+    # pull rebased branch
+    pull()
+
+    IO.popen("git rebase #{branch_name} --ignore-whitespace") do |io|
+      unless io.gets
+        Logger.error("#{name} is already in a rebase-apply, Please:\n"\
+                      "  1.Resolve it;\n"\
+                      "  2.Commit the changes;\n"\
+                      "  3.Push to remote;\n"\
+                      "  4.Create a MR;\n"\
+                      "  5.Run 'finish' again.")
+      end
+      io.each do |line|
+        next unless line.include? 'Merge conflict'
+        Logger.error("Merge conflict in #{name}, Please:\n"\
+                      "  1.Resolve it;\n"\
+                      "  2.Commit the changes;\n"\
+                      "  3.Push to remote;\n"\
+                      "  4.Create a MR;\n"\
+                      "  5.Run 'finish' again.")
+      end
+    end
+    if current_branch() != 'develop' && current_branch() != 'master'
+      `git push -f`
+    else
+      Logger.error("You should not push 'master' or 'develop'")
     end
   end
 

@@ -118,6 +118,18 @@ module BigKeeper
       ModuleCacheOperator.new(path).del_path_module(module_name)
     end
 
+    def new_finish(path, user, module_name, home_branch_name)
+      Logger.highlight("Finish branch '#{home_branch_name}' for module '#{module_name}'...")
+
+      DepService.dep_operator(path, user).update_module_config(module_name, ModuleOperateType::FINISH)
+
+      module_full_path = BigkeeperParser.module_full_path(path, user, module_name)
+      GitService.new.verify_push(module_full_path, "finish branch #{home_branch_name}", home_branch_name, module_name)
+
+      ModuleCacheOperator.new(path).add_git_module(module_name)
+      ModuleCacheOperator.new(path).del_path_module(module_name)
+    end
+
     def add(path, user, module_name, name, type)
       home_branch_name = "#{GitflowType.name(type)}/#{name}"
       Logger.highlight("Add branch '#{home_branch_name}' for module '#{module_name}'...")
