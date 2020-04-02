@@ -64,6 +64,7 @@ module BigKeeper
         content.gsub!(/version\s/, 'BigKeeper::version ')
         content.gsub!(/user\s/, 'BigKeeper::user ')
         content.gsub!(/home\s/, 'BigKeeper::home ')
+        content.gsub!(/source\s/, 'BigKeeper::source ')
         content.gsub!(/mod\s/, 'BigKeeper::mod ')
         content.gsub!(/modules\s/, 'BigKeeper::modules ')
         content.gsub!(/configs\s/, 'BigKeeper::configs ')
