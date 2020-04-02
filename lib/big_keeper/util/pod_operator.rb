@@ -22,7 +22,6 @@ module BigKeeper
       Logger.highlight(%Q(Start Pod repo push #{module_name}))
       Dir.chdir(path) do
         command = ""
-        p BigkeeperParser.source_spec_name(module_name)
         if source.length > 0
           command = "pod repo push #{BigkeeperParser.source_spec_name(module_name)} #{module_name}.podspec --allow-warnings --sources=#{source} --verbose --use-libraries"
         else
@@ -47,11 +46,13 @@ module BigKeeper
 
     def self.pod_update_private_repos(update_private)
       if update_private
-        BigkeeperParser.sources.map { |spec|
-          Logger.highlight('Start pod repo update, waiting...')
-          cmd = "pod repo update #{spec}"
-          cmd(cmd)
-        }
+        if BigkeeperParser.sources != nil 
+          BigkeeperParser.sources.map { |spec|
+            Logger.highlight('Start pod repo update, waiting...')
+            cmd = "pod repo update #{spec}"
+            cmd(cmd)
+          }
+        end
       else
         cmd = "pod repo update"
         cmd(cmd)

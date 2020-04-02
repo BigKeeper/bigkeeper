@@ -64,7 +64,6 @@ module BigKeeper
         content.gsub!(/version\s/, 'BigKeeper::version ')
         content.gsub!(/user\s/, 'BigKeeper::user ')
         content.gsub!(/home\s/, 'BigKeeper::home ')
-        content.gsub!(/source\s/, 'BigKeeper::source ')
         content.gsub!(/mod\s/, 'BigKeeper::mod ')
         content.gsub!(/modules\s/, 'BigKeeper::modules ')
         content.gsub!(/configs\s/, 'BigKeeper::configs ')
@@ -192,7 +191,9 @@ module BigKeeper
     end
 
     def self.sources
-      @@config[:source].keys
+      if @@config[:source] != nil
+        @@config[:source].keys
+      end
     end
 
     def self.post_install_command
@@ -274,7 +275,9 @@ module BigKeeper
     end
 
     def self.module_names
-      @@config[:modules].keys
+      if @@config[:modules] != nil
+        @@config[:modules].keys
+      end
     end
 
     def self.config
