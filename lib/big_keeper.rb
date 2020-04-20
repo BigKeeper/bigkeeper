@@ -96,8 +96,12 @@ module BigKeeper
     # desc 'Show version of bigkeeper'
     command cmd do |cmd|
       cmd.action do |global_options, options, args|
-        input_cmd = "#{cmd.name} " + args.join(' ')
-        
+        input_cmd = "#{cmd.name}"
+        if args.join(' ').length > 0
+          input_cmd += ' '
+          input_cmd += args.join(' ')
+        end
+        p "#{input_cmd}"
         ParseEngine.parse_command(input_cmd)
         BigkeeperParser.parse("#{ParseEngine.user_path}/Bigkeeper")
         

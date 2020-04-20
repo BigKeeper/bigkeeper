@@ -1,11 +1,11 @@
 require 'engine/parse_para.rb'
 require 'node/git_node.rb'
 require 'node/podfile_node.rb'
+require 'node/util_node.rb'
 
 module BigKeeper
 
   def self.home_new_branch(flow_inputs)
-    p 'home_new_branch'
     branch_name = 'branch_name';
     for input in flow_inputs
       if branch_name == input
@@ -16,6 +16,8 @@ module BigKeeper
     if branch_name == 'branch_name'
       Logger.error("please input the require parameter branch_name.")
     end
+
+    branch_name = branch_factory(branch_name)
     
     baseline_branch = BigkeeperParser.global_configs("baselineBranch") 
     
@@ -27,7 +29,6 @@ module BigKeeper
   end
 
   def self.module_new_branch(flow_inputs)
-    p 'module_new_branch'
     branch_name = 'branch_name';
     modules = 'modules';
     for input in flow_inputs
@@ -43,6 +44,8 @@ module BigKeeper
     if branch_name == 'branch_name'
       Logger.error("please input the require parameter branch_name.")
     end
+
+    branch_name = branch_factory(branch_name)
     
     baseline_branch = BigkeeperParser.global_configs("baselineBranch") 
     
@@ -165,6 +168,14 @@ module BigKeeper
           system("aone review")
         end
       end
+    end
+  end
+
+  def self.home_pr
+    path = ParseEngine.user_path
+    
+    Dir.chdir(path) do
+      system("aone review")
     end
   end
 
