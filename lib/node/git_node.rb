@@ -44,11 +44,11 @@ module BigKeeper
 
   def self.verify_push(comment, branch_name)
     if has_changes || has_commits(branch_name)
-      if has_changes
-        commit(comment)
-        push(branch_name)
+      commit(comment) if has_changes
+      if has_remote_branch(branch_name)
+        `git push`
       else
-        push(branch_name)
+        push_to_remote(branch_name)
       end
     else
       Logger.default("Nothing to push for '#{name}'.")

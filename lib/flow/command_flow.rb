@@ -1,14 +1,26 @@
 require 'engine/parse_para.rb'
 require 'node/git_node.rb'
 require 'node/podfile_node.rb'
+require 'node/util_node.rb'
+require 'big_keeper/dependency/dep_service'
 
 module BigKeeper
   def self.feature_start_pre(flow_inputs)
     modules = 'modules';
+    branch_name = 'branch_name';
+
     for input in flow_inputs
       if modules == input
         modules = ParsePara.get_flow_para('modules').split(' ')
       end
+
+      if branch_name == input
+        branch_name = ParsePara.get_flow_para('branch_name')
+      end
+    end
+
+    if branch_name == 'branch_name'
+      Logger.error("please input the require parameter branch_name.")
     end
 
     path = ParseEngine.user_path
@@ -20,8 +32,26 @@ module BigKeeper
     modules = ModuleCacheOperator.new(path).remain_path_modules
 
     ParsePara.add_para('modules', modules.join(' '))
+
+    branch_name = branch_factory(branch_name)
+    ParsePara.add_para('branch_name', branch_name)
           
     DepService.dep_operator(path, user).backup
+  end
+
+  def self.feature_start_post(flow_inputs)
+    branch_name = 'branch_name';
+
+    for input in flow_inputs
+      if branch_name == input
+        branch_name = ParsePara.get_flow_para('branch_name')
+      end
+    end
+
+    Dir.chdir(ParseEngine.user_path) do
+      verify_push("init #{branch_name}", branch_name)
+      DepService.dep_operator(ParseEngine.user_path, ParseEngine.user).open
+    end
   end
 
   def self.feature_update_pre(flow_inputs)
@@ -63,12 +93,34 @@ module BigKeeper
     end
   end
 
+  def self.feature_finish_pre
+    p 'feature_finish_pre'
+    path = ParseEngine.user_path
+    Dir.chdir(path) do
+      branch_name = current_branch()
+      p branch_name
+      Logger.error("Not a feature branch, exit.") unless branch_name.include? 'feature'
+
+      # Cache git modules
+      if ModuleCacheOperator.new(path).all_path_modules.empty?
+        Logger.error("Branch '#{branch_name}' is already finished, exit.")
+      end
+      
+      # Push modules changes to remote then rebase
+      ModuleCacheOperator.new(path).cache_git_modules(ModuleCacheOperator.new(path).all_path_modules)
+      modules = ModuleCacheOperator.new(path).remain_git_modules
+      
+      ParsePara.add_para('modules', modules.join(' '))
+      ParsePara.add_para('branch_name', branch_name)
+    end
+  end
+
   def self.feature_publish_pre
     path = ParseEngine.user_path
     Dir.chdir(path) do
       branch_name = current_branch()
 
-      # Logger.error("Not a feature branch, exit.") unless branch_name.include? 'feature'
+      Logger.error("Not a feature branch, exit.") unless branch_name.include? 'feature'
 
       path_modules = ModuleCacheOperator.new(path).current_path_modules
       Logger.error("You have unfinished modules #{path_modules}, Use 'finish' first please.") unless path_modules.empty?
