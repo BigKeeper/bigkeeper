@@ -18,7 +18,6 @@ module BigKeeper
 
     def self.execute(plugin_name)  
       Dir.chdir(@@plugins_file_path) do
-        p `pwd`
         if plugin_name.end_with?(".rb")
           cmd = "ruby #{plugin_name}"
           IO.popen(cmd) do |io|

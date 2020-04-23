@@ -25,6 +25,7 @@ require 'flow/git_flow'
 require 'flow/command_flow'
 require 'flow/podfile_flow'
 require 'flow/pod_flow'
+require 'flow/gradle_flow'
 
 require 'node/git_node'
 require 'engine/parse_para'
@@ -42,12 +43,10 @@ module BigKeeper
   flag %i[u user], default_value: GitOperator.new.user
   flag %i[l log], default_value: true
 
-  @@path = '/Users/SFM/workspace/ali-ele/LPDTeamiOS'
   def BigKeeper.analysis_config_file
-    p 'analysis_config_file'
-    
-    ParseEngine.parse_config(@@path)
-    ParseEngine.parse_plugin(@@path)
+    current_path = current_word_path
+    ParseEngine.parse_config(current_path.chop)
+    ParseEngine.parse_plugin(current_path.chop)
     @cmd = ParseEngine.short_command_list()
   end
 
@@ -101,7 +100,7 @@ module BigKeeper
           input_cmd += ' '
           input_cmd += args.join(' ')
         end
-        p "#{input_cmd}"
+        
         ParseEngine.parse_command(input_cmd)
         BigkeeperParser.parse("#{ParseEngine.user_path}/Bigkeeper")
         

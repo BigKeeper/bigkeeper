@@ -9,4 +9,14 @@ module BigKeeper
     full_name = "feature/#{version}_#{user}_#{name}"
     full_name
   end
+
+  def self.current_word_path
+    path = ''
+    IO.popen("pwd") do |io|
+      io.each do |line|
+        path = line
+      end
+    end
+    path
+  end
 end
